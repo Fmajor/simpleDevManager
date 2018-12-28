@@ -16,7 +16,7 @@ print("俗话说的好:", 利其器()) # o(╯□╰)o
 
 ## 文件定义
 * features.txt: 用来定义各种项目特性，具体格式见文件内部注释
-* features*: 使用脚本生成的基于features.txt中各种字段排序和组织的文件，例如:
+* features*: 使用脚本生成的基于features.txt中各种字段排序和组织的文件，例如:
   * features_by_tags.txt: 基于标签排序和组织的特性
   * features_by_catalogue.txt: 基于目录结构排序和组织的特性
   * features_by_state.txt: 基于开发状态排序和组织的特性
