@@ -25,3 +25,7 @@ print("俗话说的好:", 利其器()) # o(╯□╰)o
 
 ## 使用方法:
 * make demo: 解析feature_demo.txt, 生成feature_demo_by_tags.txt, feature_demo_by_state.txt和feature_demo_by_catalogue.txt
+* 参考makefile内容学习脚本用法，自行修改makefile
+
+## demo:
+参考features_demo.md和features_demo.txt
