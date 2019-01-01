@@ -13,9 +13,6 @@ features = []
 prefix = []
 suffix = []
 
-properties = [
-    'desc:', 'tree:', 'tags:', 'stat:', 'disc:'
-    ]
 property = None
 
 for linenum, eachline in enumerate(f, start=1):
@@ -32,11 +29,11 @@ for linenum, eachline in enumerate(f, start=1):
     title = eachline[17:]
     thisContent = [eachline]
     thisFeature = {
-        'title': title,
-        'date': date,
-        'content': thisContent,
-        'state': state
-        }
+      'title': title,
+      'date': date,
+      'content': thisContent,
+      'state': state
+      }
     features.append(thisFeature)
     property = None
   elif indent == 0 and not eachline.startswith('*'):
@@ -47,15 +44,20 @@ for linenum, eachline in enumerate(f, start=1):
     elif eachline.startswith('" vim'):
       suffix.append(eachline)
   elif indent == 1:
-    name = eachline[indent*2:indent*2+5]
-    if name not in properties:
+    if ':' not in eachline:
       raise Exception('line: {}: unknown property: {}'.format(linenum, eachline))
-    property = name[:-1]
-    content = eachline[indent*2+5:].strip()
-  # print('{:3d}:{}:{}'.format(linenum, indent, eachline))
+    property = eachline.split(':')[0].strip()
+    content = ':'.join(eachline.split(':')[1:])
+    print('{:3d}:{}:{}'.format(linenum, indent, eachline, property, content))
   if indent >= 1:
     thisFeature['content'].append(eachline)
-    if property in ['desc', 'tree', 'stat', 'disc']:
+    if property == 'tags':
+      if indent != 1:
+        raise Exception('line: {}: tags should be defined in one line: {}'.format(linenum, eachline))
+      if not content:
+        raise Exception('line: {}: shoud give tags after "tags: ": {}'.format(linenum, eachline))
+      thisFeature[property] = list(map(lambda _:_.strip(), content.split(',')))
+    elif property in ['desc', 'tree', 'stat', 'disc']:
       if thisFeature.get(property) is None:
         thisFeature[property] = []
         if indent == 1 and content:
@@ -65,25 +67,25 @@ for linenum, eachline in enumerate(f, start=1):
         if property == 'tree':
           content = content.strip()
         thisFeature[property].append(content)
-    elif property == 'tags':
-      if indent != 1:
-        raise Exception('line: {}: tags should be defined in one line: {}'.format(linenum, eachline))
-      if not content:
-        raise Exception('line: {}: shoud give tags after "tags: ": {}'.format(linenum, eachline))
-      thisFeature[property] = list(map(lambda _:_.strip(), content.split(',')))
-    else:
-      raise Exception('line: {}: unknown property: {}'.format(linenum, eachline))
+    else: # just record all other properties
+      if thisFeature.get(property) is None:
+        thisFeature[property] = []
+        if indent == 1 and content:
+          thisFeature[property].append(content)
+      else:
+        content = eachline[2*2:]# indent must be 2
+        thisFeature[property].append(content)
 f.close()
 
 tags = []
 trees = []
 stat = {
-    "d": 'developing',
-    "p": 'planned',
-    " ": 'proposed',
-    "f": 'finished',
-    "r": 'rejected',
-    "?": 'under debate',
+  "d": 'developing',
+  "p": 'planned',
+  " ": 'proposed',
+  "f": 'finished',
+  "r": 'rejected',
+  "?": 'under debate',
 }
 for each in features:
   tags.extend(each.get('tags', []))
@@ -141,4 +143,3 @@ with open(filename_raw + '_by_state' + file_extension, 'w') as f:
       newContent = list(map(lambda _:'  '+_, each['content']))
       f.write('\n'.join(newContent)+'\n')
   f.write('\n'.join(suffix))
-
