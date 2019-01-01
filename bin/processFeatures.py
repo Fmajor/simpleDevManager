@@ -48,7 +48,7 @@ for linenum, eachline in enumerate(f, start=1):
       raise Exception('line: {}: unknown property: {}'.format(linenum, eachline))
     property = eachline.split(':')[0].strip()
     content = ':'.join(eachline.split(':')[1:])
-    print('{:3d}:{}:{}'.format(linenum, indent, eachline, property, content))
+    #print('{:3d}:{}:{}'.format(linenum, indent, eachline, property, content))
   if indent >= 1:
     thisFeature['content'].append(eachline)
     if property == 'tags':
